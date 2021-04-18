@@ -1,8 +1,10 @@
 ///-----------------------------------
 ///----------add a toy----------------
 ///-----------------------------------
-
 let addToy = false;
+const toysMenu = document.getElementById("toy-collection");
+const toyName = document.getElementById("toy-name");
+const toyImg = document.getElementById("toy-url");
 document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.querySelector("#new-toy-btn");
   const toyFormContainer = document.querySelector(".container");
@@ -11,19 +13,28 @@ document.addEventListener("DOMContentLoaded", () => {
     addToy = !addToy;
     if (addToy) {
       toyFormContainer.style.display = "block";
+      const submitToy = document.getElementsByClassName("submit");
+      submitToy.addEventListener('submit', (event) => {
+        event.preventDefault();
+        postToy();
+      })
     } else {
       toyFormContainer.style.display = "none";
     }
   });
 
 
-///-----------------------------------
-///------------"GET" toys-------------
-///-----------------------------------
-  const toysMenu = document.getElementById("toy-collection");
+
+
+  ///-----------------------------------
+  ///------------"GET" toys-------------
+  ///-----------------------------------
   fetch("http://localhost:3000/toys")
   .then(resp => resp.json())
-  .then(data => {
+  .then(data => getToys(data))
+    
+
+  function getToys(data) {
     for (i = 0; i < data.length; i++) {
       const toy = document.createElement('div');
       toy.setAttribute("class", "card");
@@ -41,8 +52,43 @@ document.addEventListener("DOMContentLoaded", () => {
       toysMenu.append(toy);
       toy.append(h2, img, p, likeButton);
     }
-  })
+  }
+
+
+  
+  function postToy() {
+    fetch("http://localhost:3000/toys", {
+      method: 'POST',
+      headers: 
+      {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+  
+      body: JSON.stringify({
+        "name": `${toyName.value}`,
+        "image": `${toyImg.value}`,
+        "likes": 0
+      }) 
+    })
+    .then(resp => resp.json())
+    .then(data => console.log(data))
+  }
+
+  function renderToy(data) {
+    
+  }
+
+
+
+
+
+  
+
+
 });
+
+
 
 
 
