@@ -5,7 +5,8 @@ let addToy = false;
 const toysMenu = document.getElementById("toy-collection");
 const toyName = document.getElementById("toy-name");
 const toyImg = document.getElementById("toy-url");
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", (e) => {
+  e.preventDefault();
   const addBtn = document.querySelector("#new-toy-btn");
   const toyFormContainer = document.querySelector(".container");
   addBtn.addEventListener("click", () => {
@@ -13,11 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     addToy = !addToy;
     if (addToy) {
       toyFormContainer.style.display = "block";
-      const submitToy = document.getElementsByClassName("submit");
-      submitToy.addEventListener('submit', (event) => {
-        event.preventDefault();
-        postToy();
-      })
     } else {
       toyFormContainer.style.display = "none";
     }
@@ -54,8 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-
   
+  ///-----------------------------------
+  ///------------"POST" toys------------
+  ///-----------------------------------
   function postToy() {
     fetch("http://localhost:3000/toys", {
       method: 'POST',
@@ -64,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "Content-Type": "application/json",
         Accept: "application/json"
       },
-  
       body: JSON.stringify({
         "name": `${toyName.value}`,
         "image": `${toyImg.value}`,
@@ -72,18 +69,43 @@ document.addEventListener("DOMContentLoaded", () => {
       }) 
     })
     .then(resp => resp.json())
-    .then(data => console.log(data))
+    .then(data => renderToy(data))
   }
-
-  function renderToy(data) {
-    
-  }
-
-
-
-
-
   
+  function renderToy(data) {
+    toysMenu.append(data);
+  }
+  
+  const submitToy = document.getElementById('submit-form');
+  submitToy.addEventListener('submit', (event) => {
+    postToy();
+    event.target.reset()
+  })
+
+
+
+
+  ///-----------------------------------
+  ///------------"PATCH" toys-----------
+  ///-----------------------------------
+
+ toysMenu.addEventListener('click', (e) => {
+   if (e.target.className === 'like-btn') {
+
+   }
+ })
+
+
+
+
+function updateLikes(id) {
+  fetch(`http://localhost:3000/toys/${id}`)
+
+}
+
+
+
+
 
 
 });
