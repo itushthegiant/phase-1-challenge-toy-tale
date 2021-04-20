@@ -91,20 +91,44 @@ document.addEventListener("DOMContentLoaded", (e) => {
 
  toysMenu.addEventListener('click', (e) => {
    if (e.target.className === 'like-btn') {
-
+     console.log(e.target.previousElementSibling)
+    updateLikes(e.target.id, e);
+    
    }
  })
 
 
+ function newLikes(data, p) {
+  for (i = 0; i < data.length; i++) {
+    p.innerText = `${data.likes.value} Likes`;
+  }
+
+ }
 
 
-function updateLikes(id) {
-  fetch(`http://localhost:3000/toys/${id}`)
-
+function updateLikes(id, e) {
+  const likePTag = e.target.previousElementSibling;
+  let numberLikes = e.target.previousElementSibling.innerHTML.split(" ")[0];
+  let number = parseInt(numberLikes);
+  if (number === NaN) {
+    number = 0;
+  }
+  e.target.previousElementSibling.innerHTML = ++number + " Likes";
+  e.preventDefault();
+  fetch(`http://localhost:3000/toys/${id}`, {
+    method: 'PATCH',
+    headers: 
+    {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify({
+      "likes": number
+    }) 
+  })
+  .then(resp => resp.json())
+  .then(data => newLikes(data, likePTag))
 }
-
-
-
 
 
 
